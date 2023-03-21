@@ -33,4 +33,5 @@ Imports:
     future,
     zoo,
     data.table,
-    xml2
+    xml2,
+    stringr
