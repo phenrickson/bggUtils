@@ -34,4 +34,5 @@ Imports:
     zoo,
     data.table,
     xml2,
-    stringr
+    stringr,
+    ggplot2
