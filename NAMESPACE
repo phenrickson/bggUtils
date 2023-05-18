@@ -3,6 +3,7 @@
 export(clean_text)
 export(get_bgg_games)
 export(get_user_collection)
+export(present_text)
 export(theme_bgg)
 import(RcppSimdJson)
 import(XML)
