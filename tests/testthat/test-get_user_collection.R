@@ -10,7 +10,6 @@ test_that("function pulls expected data data from bgg", {
         # defined collection names that should appear
         collection_names = c("username",
                              "url",
-                             "load_ts",
                              "game_id",
                              "name",
                              "type",
@@ -23,7 +22,9 @@ test_that("function pulls expected data data from bgg", {
                              "wanttoplay",
                              "wanttobuy",
                              "wishlist",
-                             "wishlistpriority")
+                             "wishlistpriority",
+                             "load_ts",
+                             "lastmodified")
 
         # did function return a list?
         expect_type(collection, type = "list")
@@ -31,6 +32,13 @@ test_that("function pulls expected data data from bgg", {
         expect_gt(nrow(collection), 0)
         # did the names match expected?
         expect_identical(collection_names, names(collection))
+        # were there any duplicated game ids?
+        expect_length(collection |>
+                          group_by(game_id) |>
+                          count() |>
+                          filter(n > 1) |>
+                          pull(game_id),
+                      0)
 
 })
 
