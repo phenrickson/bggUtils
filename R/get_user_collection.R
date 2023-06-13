@@ -1,123 +1,177 @@
 #' get_user_collection: pulling collection data for a boardgamegeek user
 #'
-#' @description
+#' @description This function pulls boardgamegeek collection data for a given username
 #'
-#' wrapper around a function from bggAnalytics for loading collection info.
+#'
 #'
 #' @param username a username on boardgamegeek; case sensitive
-#' @import magrittr bggAnalytics dplyr tibble
+#' @import httr2
+#' @importFrom xml2 xml_children
+#' @importFrom xml2 xml_find_all
+#' @importFrom xml2 xml_attr
+#' @importFrom xml2 xml_text
 #'
 #' @return data frame with user collection
-#' @export
+#' @export get_user_collection
 #'
 #' @examples
 #' user_collection <- get_user_collection("mrbananagrabber")
 #'
-get_user_collection <-
-        function(username) {
+#'
 
-                message(paste('searching for bgg collection for', username))
+get_user_collection = function(username) {
 
-                # search for collection up to 10 times; sleep for 10 seconds between requests
-                collection_obj =
-                        retry(bggCollection$new(username = username),
-                              maxErrors = 15,
-                              sleep = 10)
+        xml =
+                request_collection(username) |>
+                get_collection_xml()
 
-                # expand
-                collection_obj$expand(variable_names = c("name",
-                                                         "type",
-                                                         "yearpublished",
-                                                         "rating",
-                                                         "numplays",
-                                                         "own",
-                                                         "preordered",
-                                                         "prevowned",
-                                                         "fortrade",
-                                                         "want",
-                                                         "wanttoplay",
-                                                         "wanttobuy",
-                                                         "wishlist",
-                                                         "wishlistpriority"))
+        collection =
+                xml |>
+                get_collection() |>
+                remove_duplicate_games()
 
-                #  message(paste(nrow(collection_obj$data), 'records found in bgg collection for', username))
-
-                # convert to dataframe
-                collection_data<-
-                        collection_obj$data %>%
-                        transmute(username = username,
-                                  url = collection_obj$api_url,
-                                  load_ts = collection_obj$timestamp,
-                                  game_id = objectid,
-                                  name,
-                                  type,
-                                  rating,
-                                  own,
-                                  preordered,
-                                  prevowned,
-                                  fortrade,
-                                  want,
-                                  wanttoplay,
-                                  wanttobuy,
-                                  wishlist,
-                                  wishlistpriority) %>%
-                        # convert logical to dummies
-                        mutate_if(is.logical, ~ case_when(. == T ~ 1,
-                                                          TRUE ~ 0)) %>%
-                        # order by game id and then desc own
-                        arrange(game_id, desc(own))
-
-                message('removing duplicates from collection...')
-
-                # check for duplicated game_ids
-                dupes = which(duplicated(collection_data$game_id)==T)
-
-                if (length(dupes) > 0) {
-                        collection_data_out = collection_data[-dupes,]
-                } else {
-                        collection_data_out = collection_data
-                }
-
-                message(paste(nrow(collection_obj$data), 'records returned for', username))
-
-                # convert to
-                collection_data_out = collection_data_out
-
-                return(collection_data_out)
-
-        }
-
-isError<-
-        function(x) {
-                "try-error" %in% class(x)
-        }
-
-retry <-
-        function(expr, maxErrors=5, sleep=0) {
-
-        attempts = 0
-
-        retval = try(eval(expr), silent=T)
-
-        while (isError(retval)) {
-
-                attempts = attempts + 1
-
-                if (attempts >= maxErrors) {
-                        msg = paste("too many attempts")
-                        stop(msg)
-                } else {
-                        msg = paste("retry: no response in attempt", attempts, "of",  maxErrors)
-                        # flog.error(msg)
-                        message(msg)
-                }
-                if (sleep > 0) Sys.sleep(sleep)
-
-                suppressWarnings({
-                        retval = try(eval(expr), silent = T)
-                })
-        }
-        return(retval)
-
+        dplyr::tibble(
+                username = username,
+                url = build_url(username),
+                collection,
+                load_ts = Sys.time()) |>
+                distinct(
+                        username,
+                        url,
+                        game_id,
+                        name,
+                        type,
+                        rating,
+                        own,
+                        preordered,
+                        prevowned,
+                        fortrade,
+                        want,
+                        wanttoplay,
+                        wanttobuy,
+                        wishlist,
+                        wishlistpriority,
+                        load_ts,
+                        lastmodified) |>
+                group_by(game_id) |>
+                filter(lastmodified == max(lastmodified)) |>
+                ungroup()
 
 }
+
+# remove duplicate games
+remove_duplicate_games = function(collection) {
+
+        collection |>
+                group_by(game_id) |>
+                filter(lastmodified == max(lastmodified)) |>
+                ungroup()
+
+        }
+
+# build url for username api request
+build_url = function(username) {
+
+        paste0("https://www.boardgamegeek.com/xmlapi2/collection?username=",
+               username,
+               "&subtype=boardgame",
+               "&stats=1")
+}
+
+# build request to keep trying for up to two minutes based on status
+build_request = function(url) {
+
+        request(url) |>
+                req_retry(
+                        is_transient = ~ resp_status(.x) == 202,
+                        max_seconds = 120,
+                        backoff = ~ 10)
+}
+
+# perform user request
+request_collection = function(username) {
+
+        username |>
+                build_url() |>
+                build_request() |>
+                req_perform()
+
+}
+
+# get xml from response
+get_collection_xml = function(response) {
+
+        response |>
+                resp_body_xml(simplifyVector = T) |>
+                xml_children()
+}
+
+# get collection info
+get_collection = function(xml) {
+
+
+        get_status_vars = function(xml, var) {
+
+
+                vec =
+                        xml |>
+                        xml_find_all("//status") |>
+                        xml_attr(var)
+
+                col =
+                        dplyr::tibble(vec)
+
+                names(col) = var
+
+                col
+        }
+
+        types =
+                xml |>
+                xml_attr("subtype")
+
+        ids = xml |>
+                xml_attr("objectid")
+
+        collids =
+                xml |>
+                xml_attr("collid")
+
+        names =
+                xml %>%
+                xml_find_all("//name") |>
+                xml_text()
+
+        status_vars =
+                c("own",
+                  "preordered",
+                  "prevowned",
+                  "fortrade",
+                  "want",
+                  "wanttoplay",
+                  "wanttobuy",
+                  "wishlist",
+                  "wishlistpriority",
+                  "lastmodified")
+
+        status =
+                purrr::map(status_vars,
+                           ~ get_status_vars(xml, .x)) |>
+                dplyr::bind_cols()
+
+        rating =
+                xml |>
+                xml_find_all("//rating") |>
+                xml_attr("value")
+
+        dplyr::bind_cols(
+                dplyr::tibble(game_id = ids),
+                dplyr::tibble(collection_id = collids),
+                dplyr::tibble(type = types),
+                dplyr::tibble(name = names),
+                status,
+                dplyr::tibble(rating = rating)
+        )
+
+}
+

@@ -1,38 +1,38 @@
-Package: bggUtils
 Type: Package
+Package: bggUtils
 Title: Functions for BoardGameGeek Data
 Version: 0.1.0
 Author: Phil Henrickson
 Maintainer: <phil.henrickson@gmail.com>
-Description: Package containing helper functions for loading and analysing BGG data.
-    Makes use of bggAnalytics for data collection and general tidyverse functions for manipulation.
+Description: Package containing helper functions for loading and analysing
+    BGG data.  Makes use of tidyverse functions for manipulation.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
 URL: https://github.com/phenrickson/bggUtils
 BugReports: https://github.com/phenrickson/bggUtils/issues
-RoxygenNote: 7.2.3
+Depends:
+    bggAnalytics,
+    dplyr,
+    foreach,
+    httr2,
+    jsonlite,
+    magrittr,
+    purrr,
+    RcppSimdJson,
+    rvest,
+    tibble,
+    tidyr,
+    XML
+Imports:
+    data.table,
+    furrr,
+    future,
+    ggplot2,
+    stringr,
+    xml2,
+    zoo
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Depends:
-    bggAnalytics,
-    magrittr,
-    tibble,
-    dplyr,
-    tidyr,
-    foreach,
-    httr2,
-    XML,
-    jsonlite,
-    rvest,
-    RcppSimdJson,
-    purrr
-Imports:
-    furrr,
-    future,
-    zoo,
-    data.table,
-    xml2,
-    stringr,
-    ggplot2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3

@@ -13,9 +13,10 @@ get_user_collection(username)
 data frame with user collection
 }
 \description{
-wrapper around a function from bggAnalytics for loading collection info.
+This function pulls boardgamegeek collection data for a given username
 }
 \examples{
 user_collection <- get_user_collection("mrbananagrabber")
+
 
 }
