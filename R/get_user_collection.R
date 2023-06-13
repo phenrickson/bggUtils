@@ -35,6 +35,7 @@ get_user_collection = function(username) {
                 url = build_url(username),
                 collection,
                 load_ts = Sys.time()) |>
+                # distinct
                 distinct(
                         username,
                         url,
@@ -53,9 +54,27 @@ get_user_collection = function(username) {
                         wishlistpriority,
                         load_ts,
                         lastmodified) |>
-                group_by(game_id) |>
-                filter(lastmodified == max(lastmodified)) |>
-                ungroup()
+                # set nas
+                mutate(rating = na_if(rating, "N/A")) |>
+                # set types
+                mutate(username,
+                       url,
+                       game_id = as.integer(game_id),
+                       name = name,
+                       type,
+                       rating = as.numeric(rating),
+                       own = as.numeric(own),
+                       preordered = as.numeric(preordered),
+                       prevowned = as.numeric(preordered),
+                       fortrade = as.numeric(fortrade),
+                       want = as.numeric(want),
+                       wanttoplay = as.numeric(wanttoplay),
+                       wanttobuy = as.numeric(wanttobuy),
+                       wishlist = as.numeric(wishlist),
+                       wishlistpriority = as.numeric(wishlistpriority),
+                       load_ts,
+                       lastmodified,
+                       .keep = 'none')
 
 }
 
