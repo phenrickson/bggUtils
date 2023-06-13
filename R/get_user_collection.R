@@ -59,7 +59,7 @@ get_user_collection = function(username) {
 
 }
 
-# remove duplicate games
+# remove duplicate games based on lastmodified
 remove_duplicate_games = function(collection) {
 
         collection |>

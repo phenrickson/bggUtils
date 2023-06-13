@@ -6,7 +6,7 @@
 \alias{bggUtils-package}
 \title{bggUtils: Functions for BoardGameGeek Data}
 \description{
-Package containing helper functions for loading and analysing BGG data. Makes use of bggAnalytics for data collection and general tidyverse functions for manipulation.
+Package containing helper functions for loading and analysing BGG data. Makes use of tidyverse functions for manipulation.
 }
 \seealso{
 Useful links:

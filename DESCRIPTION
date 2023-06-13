@@ -10,7 +10,6 @@ License: MIT + file LICENSE
 URL: https://github.com/phenrickson/bggUtils
 BugReports: https://github.com/phenrickson/bggUtils/issues
 Depends:
-    bggAnalytics,
     dplyr,
     foreach,
     httr2,
