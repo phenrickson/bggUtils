@@ -4,7 +4,7 @@
 \alias{get_user_collection}
 \title{get_user_collection: pulling collection data for a boardgamegeek user}
 \usage{
-get_user_collection(username)
+get_user_collection(username, ...)
 }
 \arguments{
 \item{username}{a username on boardgamegeek; case sensitive}

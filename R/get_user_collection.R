@@ -19,7 +19,8 @@
 #'
 #'
 
-get_user_collection = function(username) {
+get_user_collection = function(username,
+                               ...) {
 
         xml =
                 request_collection(username) |>
@@ -86,7 +87,7 @@ remove_duplicate_games = function(collection) {
                 filter(lastmodified == max(lastmodified)) |>
                 ungroup()
 
-        }
+}
 
 # build url for username api request
 build_url = function(username) {
@@ -98,17 +99,21 @@ build_url = function(username) {
 }
 
 # build request to keep trying for up to two minutes based on status
-build_request = function(url) {
+build_request = function(url,
+                         max_tries = 5,
+                         ...) {
 
         request(url) |>
                 req_retry(
                         is_transient = ~ resp_status(.x) == 202,
-                        max_seconds = 120,
-                        backoff = ~ 10)
+                        max_tries = max_tries,
+                        backoff = ~ 30
+                )
 }
 
 # perform user request
-request_collection = function(username) {
+request_collection = function(username,
+                              ...) {
 
         username |>
                 build_url() |>
