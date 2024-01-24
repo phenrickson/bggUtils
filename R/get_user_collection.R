@@ -17,185 +17,177 @@
 #' @examples
 #' user_collection <- get_user_collection("mrbananagrabber")
 #'
-#'
+get_user_collection <- function(username,
+                                ...) {
+  xml <-
+    request_collection(username) |>
+    get_collection_xml()
 
-get_user_collection = function(username,
-                               ...) {
+  collection <-
+    xml |>
+    get_collection() |>
+    remove_duplicate_games()
 
-        xml =
-                request_collection(username) |>
-                get_collection_xml()
-
-        collection =
-                xml |>
-                get_collection() |>
-                remove_duplicate_games()
-
-        dplyr::tibble(
-                username = username,
-                url = build_url(username),
-                collection,
-                load_ts = Sys.time()) |>
-                # distinct
-                distinct(
-                        username,
-                        url,
-                        game_id,
-                        name,
-                        type,
-                        rating,
-                        own,
-                        preordered,
-                        prevowned,
-                        fortrade,
-                        want,
-                        wanttoplay,
-                        wanttobuy,
-                        wishlist,
-                        wishlistpriority,
-                        load_ts,
-                        lastmodified) |>
-                # set nas
-                mutate(rating = na_if(rating, "N/A")) |>
-                # set types
-                mutate(username,
-                       url,
-                       game_id = as.integer(game_id),
-                       name = name,
-                       type,
-                       rating = as.numeric(rating),
-                       own = as.numeric(own),
-                       preordered = as.numeric(preordered),
-                       prevowned = as.numeric(prevowned),
-                       fortrade = as.numeric(fortrade),
-                       want = as.numeric(want),
-                       wanttoplay = as.numeric(wanttoplay),
-                       wanttobuy = as.numeric(wanttobuy),
-                       wishlist = as.numeric(wishlist),
-                       wishlistpriority = as.numeric(wishlistpriority),
-                       load_ts,
-                       lastmodified,
-                       .keep = 'none')
-
+  dplyr::tibble(
+    username = username,
+    url = build_url(username),
+    collection,
+    load_ts = Sys.time()
+  ) |>
+    # distinct
+    distinct(
+      username,
+      url,
+      game_id,
+      name,
+      type,
+      rating,
+      own,
+      preordered,
+      prevowned,
+      fortrade,
+      want,
+      wanttoplay,
+      wanttobuy,
+      wishlist,
+      wishlistpriority,
+      load_ts,
+      lastmodified
+    ) |>
+    # set nas
+    mutate(rating = na_if(rating, "N/A")) |>
+    # set types
+    mutate(username,
+      url,
+      game_id = as.integer(game_id),
+      name = name,
+      type,
+      rating = as.numeric(rating),
+      own = as.numeric(own),
+      preordered = as.numeric(preordered),
+      prevowned = as.numeric(prevowned),
+      fortrade = as.numeric(fortrade),
+      want = as.numeric(want),
+      wanttoplay = as.numeric(wanttoplay),
+      wanttobuy = as.numeric(wanttobuy),
+      wishlist = as.numeric(wishlist),
+      wishlistpriority = as.numeric(wishlistpriority),
+      load_ts,
+      lastmodified,
+      .keep = "none"
+    )
 }
 
 # remove duplicate games based on lastmodified
-remove_duplicate_games = function(collection) {
-
-        collection |>
-                group_by(game_id) |>
-                filter(lastmodified == max(lastmodified)) |>
-                ungroup()
-
+remove_duplicate_games <- function(collection) {
+  collection |>
+    group_by(game_id) |>
+    filter(lastmodified == max(lastmodified)) |>
+    ungroup()
 }
 
 # build url for username api request
-build_url = function(username) {
-
-        paste0("https://www.boardgamegeek.com/xmlapi2/collection?username=",
-               username,
-               "&subtype=boardgame",
-               "&stats=1")
+build_url <- function(username) {
+  paste0(
+    "https://www.boardgamegeek.com/xmlapi2/collection?username=",
+    username,
+    "&subtype=boardgame",
+    "&stats=1"
+  )
 }
 
 # build request to keep trying for up to two minutes based on status
-build_request = function(url,
-                         max_tries = 5,
-                         ...) {
-
-        request(url) |>
-                req_retry(
-                        is_transient = ~ resp_status(.x) == 202,
-                        max_tries = max_tries,
-                        backoff = ~ 30
-                )
+build_request <- function(url,
+                          max_tries = 5,
+                          ...) {
+  request(url) |>
+    req_retry(
+      is_transient = ~ resp_status(.x) == 202,
+      max_tries = max_tries,
+      backoff = ~30
+    )
 }
 
 # perform user request
-request_collection = function(username,
-                              ...) {
-
-        username |>
-                build_url() |>
-                build_request() |>
-                req_perform()
-
+request_collection <- function(username,
+                               ...) {
+  username |>
+    build_url() |>
+    build_request() |>
+    req_perform()
 }
 
 # get xml from response
-get_collection_xml = function(response) {
-
-        response |>
-                resp_body_xml(simplifyVector = T) |>
-                xml_children()
+get_collection_xml <- function(response) {
+  response |>
+    resp_body_xml(simplifyVector = T) |>
+    xml_children()
 }
 
 # get collection info
-get_collection = function(xml) {
+get_collection <- function(xml) {
+  get_status_vars <- function(xml, var) {
+    vec <-
+      xml |>
+      xml_find_all("//status") |>
+      xml_attr(var)
 
+    col <-
+      dplyr::tibble(vec)
 
-        get_status_vars = function(xml, var) {
+    names(col) <- var
 
+    col
+  }
 
-                vec =
-                        xml |>
-                        xml_find_all("//status") |>
-                        xml_attr(var)
+  types <-
+    xml |>
+    xml_attr("subtype")
 
-                col =
-                        dplyr::tibble(vec)
+  ids <- xml |>
+    xml_attr("objectid")
 
-                names(col) = var
+  collids <-
+    xml |>
+    xml_attr("collid")
 
-                col
-        }
+  names <-
+    xml %>%
+    xml_find_all("//name") |>
+    xml_text()
 
-        types =
-                xml |>
-                xml_attr("subtype")
+  status_vars <-
+    c(
+      "own",
+      "preordered",
+      "prevowned",
+      "fortrade",
+      "want",
+      "wanttoplay",
+      "wanttobuy",
+      "wishlist",
+      "wishlistpriority",
+      "lastmodified"
+    )
 
-        ids = xml |>
-                xml_attr("objectid")
+  status <-
+    purrr::map(
+      status_vars,
+      ~ get_status_vars(xml, .x)
+    ) |>
+    dplyr::bind_cols()
 
-        collids =
-                xml |>
-                xml_attr("collid")
+  rating <-
+    xml |>
+    xml_find_all("//rating") |>
+    xml_attr("value")
 
-        names =
-                xml %>%
-                xml_find_all("//name") |>
-                xml_text()
-
-        status_vars =
-                c("own",
-                  "preordered",
-                  "prevowned",
-                  "fortrade",
-                  "want",
-                  "wanttoplay",
-                  "wanttobuy",
-                  "wishlist",
-                  "wishlistpriority",
-                  "lastmodified")
-
-        status =
-                purrr::map(status_vars,
-                           ~ get_status_vars(xml, .x)) |>
-                dplyr::bind_cols()
-
-        rating =
-                xml |>
-                xml_find_all("//rating") |>
-                xml_attr("value")
-
-        dplyr::bind_cols(
-                dplyr::tibble(game_id = ids),
-                dplyr::tibble(collection_id = collids),
-                dplyr::tibble(type = types),
-                dplyr::tibble(name = names),
-                status,
-                dplyr::tibble(rating = rating)
-        )
-
+  dplyr::bind_cols(
+    dplyr::tibble(game_id = ids),
+    dplyr::tibble(collection_id = collids),
+    dplyr::tibble(type = types),
+    dplyr::tibble(name = names),
+    status,
+    dplyr::tibble(rating = rating)
+  )
 }
-
