@@ -18,5 +18,4 @@ This function pulls boardgamegeek collection data for a given username
 \examples{
 user_collection <- get_user_collection("mrbananagrabber")
 
-
 }

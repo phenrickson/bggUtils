@@ -10,5 +10,5 @@ theme_bgg()
 This is a custom theme for use with ggplot2
 }
 \examples{
-plot+theme_bgg()
+plot + theme_bgg()
 }
