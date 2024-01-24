@@ -8,40 +8,35 @@
 #' @importFrom dplyr filter
 #' @importFrom glue glue
 #'
-get_bgg_ids = function(id_type = NULL, names = c("id", "type")) {
+get_bgg_ids <- function(id_type = NULL, names = c("id", "type")) {
+  tab <- read.table(bgg_ids_url())
+  prepped <- prep_bgg_ids(tab,
+    names = names
+  )
 
-        tab = read.table(bgg_ids_url())
-        prepped = prep_bgg_ids(tab,
-                               names = names)
-
-        filtered = filter_bgg_ids(prepped,
-                                  id_type = id_type)
-        filtered
+  filtered <- filter_bgg_ids(prepped,
+    id_type = id_type
+  )
+  filtered
 }
 
-bgg_ids_url = function() {
-
-        'https://bgg.activityclub.org/bggdata/thingids.txt'
-
+bgg_ids_url <- function() {
+  "https://bgg.activityclub.org/bggdata/thingids.txt"
 }
 
-prep_bgg_ids = function(tab, names = c("id", "type")) {
+prep_bgg_ids <- function(tab, names = c("id", "type")) {
+  names(tab) <- names
 
-        names(tab) = names
-
-        tab |> as_tibble()
-
+  tab |> as_tibble()
 }
 
-filter_bgg_ids = function(tab, id_type = NULL) {
-
-        if (is.null(id_type)) {
-                tab
-        } else {
-                types = paste(id_type, collapse = ", ")
-                message(glue::glue("filtering {types}"))
-                tab |>
-                        filter(type %in% id_type)
-        }
+filter_bgg_ids <- function(tab, id_type = NULL) {
+  if (is.null(id_type)) {
+    tab
+  } else {
+    types <- paste(id_type, collapse = ", ")
+    message(glue::glue("filtering {types}"))
+    tab |>
+      filter(type %in% id_type)
+  }
 }
-
