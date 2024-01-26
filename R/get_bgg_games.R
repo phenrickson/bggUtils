@@ -22,6 +22,7 @@
 get_bgg_games <- function(game_ids,
                           batch_size = 500,
                           tidy = T,
+                          simplify = T,
                           toJSON = F) {
   # message number of games submitted
   message(paste(length(game_ids), "game(s) to submit to bgg api"))
@@ -43,7 +44,7 @@ get_bgg_games <- function(game_ids,
     } else if (tidy == T) {
       out <- suppressMessages({
         tidy_bgg_data_xml(bgg_games_xml,
-          toJSON = F
+          toJSON = toJSON
         )
       })
     }
@@ -139,6 +140,18 @@ get_bgg_games <- function(game_ids,
 
     message("all batches completed")
   }
+
+        if (simplify == T & tidy == T) {
+
+                out =
+                        tibble(game_id = game_ids) %>%
+                        left_join(.,
+                                  out$bgg_games_data %>%
+                                          nest(data = -game_id),
+                                  by = join_by(game_id)
+                        ) %>%
+                        mutate(timestamp = out$timestamp)
+        }
 
   return(out)
 }
