@@ -4,6 +4,7 @@
 #'
 #' @param game_ids vector of game_ids
 #' @param batch_size number of game_ids to submit to BGG in one batch; defaults to maximum value of 500
+#' @param simplify return only bgg data
 #' @param tidy return tidied dataframe or raw xml; defaults to T
 #' @param toJSON convert results to json; defaults to F
 #'
@@ -22,6 +23,7 @@
 get_bgg_games <- function(game_ids,
                           batch_size = 500,
                           tidy = T,
+                          simplify = F,
                           toJSON = F) {
   # message number of games submitted
   message(paste(length(game_ids), "game(s) to submit to bgg api"))
@@ -43,7 +45,7 @@ get_bgg_games <- function(game_ids,
     } else if (tidy == T) {
       out <- suppressMessages({
         tidy_bgg_data_xml(bgg_games_xml,
-          toJSON = F
+          toJSON = toJSON
         )
       })
     }
@@ -139,6 +141,22 @@ get_bgg_games <- function(game_ids,
 
     message("all batches completed")
   }
+
+        if (simplify == T & toJSON == F) {
+
+                out =
+                        tibble(game_id = game_ids) %>%
+                        left_join(.,
+                                  out$bgg_games_data %>%
+                                          nest(data = -game_id),
+                                  by = join_by(game_id)
+                        ) %>%
+                        mutate(timestamp = out$timestamp)
+        } else
+                if (simplify == T & toJSON == T) {
+
+                        out = out$bgg_games_data
+                }
 
   return(out)
 }
@@ -490,7 +508,7 @@ tidy_bgg_data_xml <- function(input_bgg_games_xml_obj,
     )
   ) %>%
     bind_rows() %>%
-    unnest(everything()) %>%
+    unnest(everything(), keep_empty = T) %>%
     nest(info = c(
       yearpublished,
       minplayers,

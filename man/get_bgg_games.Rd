@@ -4,7 +4,7 @@
 \alias{get_bgg_games}
 \title{get_bgg_games: pulling data for games on BoardGameGeek}
 \usage{
-get_bgg_games(game_ids, batch_size = 500, tidy = T, toJSON = F)
+get_bgg_games(game_ids, batch_size = 500, tidy = T, simplify = F, toJSON = F)
 }
 \arguments{
 \item{game_ids}{vector of game_ids}
@@ -12,6 +12,8 @@ get_bgg_games(game_ids, batch_size = 500, tidy = T, toJSON = F)
 \item{batch_size}{number of game_ids to submit to BGG in one batch; defaults to maximum value of 500}
 
 \item{tidy}{return tidied dataframe or raw xml; defaults to T}
+
+\item{simplify}{return only bgg data}
 
 \item{toJSON}{convert results to json; defaults to F}
 }
