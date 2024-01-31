@@ -11,6 +11,9 @@ get_bgg_ids(id_type = NULL, names = c("id", "type"))
 
 \item{names}{character vector of length two with names for columns}
 }
+\value{
+data frame with bgg ids
+}
 \description{
 This function loads the universe of BGG ids from https://bgg.activityclub.org/bggdata/thingids.txt
 }
