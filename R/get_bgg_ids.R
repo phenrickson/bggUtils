@@ -8,6 +8,9 @@
 #' @importFrom dplyr filter
 #' @importFrom glue glue
 #'
+#' @return data frame with bgg ids
+#' @export get_bgg_ids
+#'
 get_bgg_ids <- function(id_type = NULL, names = c("id", "type")) {
   tab <- read.table(bgg_ids_url())
   prepped <- prep_bgg_ids(tab,
