@@ -4,10 +4,12 @@
 \alias{get_user_collection}
 \title{get_user_collection: pulling collection data for a boardgamegeek user}
 \usage{
-get_user_collection(username, ...)
+get_user_collection(username, max_tries = 5)
 }
 \arguments{
 \item{username}{a username on boardgamegeek; case sensitive}
+
+\item{max_tries}{number of tries with BGG's api before stopping}
 }
 \value{
 data frame with user collection

@@ -63,8 +63,8 @@ get_bgg_games <- function(game_ids,
     )
 
 
-    message(paste("requesting game ids in batches of", batch_size))
-    message(paste(length(id_batches), "batch(es) to request from api"))
+    #message(paste("requesting game ids in batches of", batch_size))
+    #message(paste(length(id_batches), "batch(es) to request from api"))
 
     id_batches <- split(
       game_ids,
