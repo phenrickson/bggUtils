@@ -24,7 +24,7 @@ get_bgg_ids <- function(id_type = NULL, names = c("id", "type")) {
 }
 
 bgg_ids_url <- function() {
-  "https://bgg.activityclub.org/bggdata/thingids.txt"
+  "http://bgg.activityclub.org/bggdata/thingids.txt"
 }
 
 prep_bgg_ids <- function(tab, names = c("id", "type")) {
