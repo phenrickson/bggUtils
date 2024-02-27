@@ -4,11 +4,11 @@
 #'
 #' @param game_ids vector of game_ids
 #' @param batch_size number of game_ids to submit to BGG in one batch; defaults to maximum value of 500
-#' @param simplify return only bgg data
+#' @param simplify return bgg data in nested format
 #' @param tidy return tidied dataframe or raw xml; defaults to T
 #' @param toJSON convert results to json; defaults to F
 #'
-#' @import dplyr tibble magrittr foreach jsonlite RcppSimdJson XML rvest httr2
+#' @import dplyr tibble foreach jsonlite RcppSimdJson XML rvest httr2
 #' @importFrom data.table rbindlist
 #' @importFrom purrr map pluck
 #' @importFrom furrr future_map
