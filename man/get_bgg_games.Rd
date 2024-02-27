@@ -13,7 +13,7 @@ get_bgg_games(game_ids, batch_size = 500, tidy = T, simplify = F, toJSON = F)
 
 \item{tidy}{return tidied dataframe or raw xml; defaults to T}
 
-\item{simplify}{return only bgg data}
+\item{simplify}{return bgg data in nested format}
 
 \item{toJSON}{convert results to json; defaults to F}
 }
