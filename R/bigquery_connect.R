@@ -1,6 +1,6 @@
 #' connect to bigquery
 #'
-#' @importFrom bigrquery bq_auth
+#' @import bigrquery
 #'
 #' @param project gcp project id
 #' @param dataset bigquery schema
