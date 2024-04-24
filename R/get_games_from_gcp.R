@@ -3,7 +3,6 @@
 #' @param bucket gcp bucket
 #' @param object_name path to object in gcp bucket
 #' @param generation version of object in bucket
-#' @param bucket
 #'
 #' @import qs
 #' @import googleCloudStorageR

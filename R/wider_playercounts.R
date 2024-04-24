@@ -1,6 +1,7 @@
 #' pivot and summarize longer player count data for presentation in tables
 #'
-#' @param data plong layercounts data by game
+#' @param data long playercounts data by game
+#' @param minvotes minimum number of votes for a recommendation to be considered
 #'
 #' @import dplyr tidyr
 #' @return playercounts data in wide format

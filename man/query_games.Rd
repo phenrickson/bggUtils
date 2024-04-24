@@ -19,6 +19,3 @@ data frame with info for selected game ids
 \description{
 query active games data
 }
-\examples{
-query_info(game_ids = c(12, 7))
-}

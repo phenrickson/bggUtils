@@ -7,7 +7,9 @@
 wider_playercounts(data, minvotes = 5)
 }
 \arguments{
-\item{data}{plong layercounts data by game}
+\item{data}{long playercounts data by game}
+
+\item{minvotes}{minimum number of votes for a recommendation to be considered}
 }
 \value{
 playercounts data in wide format

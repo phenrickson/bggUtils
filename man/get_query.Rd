@@ -11,7 +11,7 @@ get_query(query, conn, eval = T, ...)
 
 \item{conn}{a DBI connection}
 
-\item{run}{to evaluate the query or to just show the query with connection}
+\item{eval}{to evaluate the query or to just show the query with connection}
 }
 \description{
 runs query given a connection

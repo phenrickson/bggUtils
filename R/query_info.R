@@ -7,9 +7,6 @@
 #' @importFrom glue glue_sql
 #' @return data frame with info for selected game ids
 #' @export query_info
-#'
-#' @examples
-#' query_info(game_ids = c(12, 7))
 query_info = function(conn = bigquery_connect(),
                       game_ids,
                       eval = T) {
