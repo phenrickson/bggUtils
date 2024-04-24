@@ -4,7 +4,7 @@
 \alias{wider_playercounts}
 \title{pivot and summarize longer player count data for presentation in tables}
 \usage{
-wider_playercounts(data)
+wider_playercounts(data, minvotes = 5)
 }
 \arguments{
 \item{data}{plong layercounts data by game}

@@ -12,6 +12,30 @@
 #'
 #' @import tidyr dplyr
 #' @export preprocess_bgg_games
+#' @export unnest_accessories
+#' @export unnest_artists
+#' @export unnest_categories
+#' @export unnest_compilations
+#' @export unnest_components
+#' @export unnest_designers
+#' @export unnest_expansions
+#' @export unnest_families
+#' @export unnest_ids
+#' @export unnest_implementations
+#' @export unnest_integrations
+#' @export unnest_links
+#' @export unnest_mechanics
+#' @export unnest_mechanisms
+#' @export unnest_names
+#' @export unnest_outcomes
+#' @export unnest_playercounts
+#' @export unnest_publishers
+#' @export unnest_statistics
+#' @export unnest_themes
+#' @export bgg_ids
+#' @export publishers_allow_list
+#' @export families_allow_list
+#' @export families_remove_list
 #'
 #' @examples
 #' api_resp = get_bgg_games(c(12, 7), simplify = TRUE)
@@ -21,146 +45,86 @@
 #' preprocess_bgg_games()
 #'
 preprocess_bgg_games = function(data,
-                                publisher_allow = publisher_allow_list(),
+                                publisher_allow = publishers_allow_list(),
                                 families_allow = families_allow_list(),
                                 families_remove = families_remove_list()
 ) {
 
-        keep_links = paste0("boardgame", c("category", "mechanic", "designer", "artist", "publisher"))
+        keep_links = c("category", "mechanic", "designer", "artist", "publisher")
 
         # outcomes =
         outcomes = data %>%
-                select(game_id, statistics) %>%
-                unnest(c(statistics), keep_empty = T) %>%
-                select(game_id, averageweight, usersrated, average, bayesaverage, numweights) %>%
-                mutate(across(
-                        c(averageweight,
-                          usersrated,
-                          average,
-                          bayesaverage),
-                        ~ ifelse(. == 0, NA, .))
-                )
+                unnest_outcomes()
 
         # get info needed from games
         info = data %>%
-                select(game_id, info) %>%
-                unnest(c(info), keep_empty = T) %>%
-                mutate(across(
-                        c(yearpublished,
-                          minplayers,
-                          maxplayers,
-                          playingtime,
-                          minplaytime,
-                          maxplaytime,
-                          minage),
-                        ~ ifelse(. == 0, NA, .))
-                )
-
-        # get primary name
-        names =
-                data %>%
-                select(game_id, names) %>%
-                unnest(c(names), keep_empty = T) %>%
-                filter(type == 'primary') %>%
-                select(game_id,
-                       name = value)
-
-        # extract links
-        links = data %>%
-                select(game_id, links) %>%
-                unnest(c(links), keep_empty = T) %>%
-                filter(type %in% keep_links) %>%
-                mutate(value = clean_bgg_text(value))
+                unnest_info()
 
         # get categories
         categories =
-                links %>%
-                filter(type == 'boardgamecategory') %>%
-                select(game_id, value) %>%
+                data %>%
+                unnest_categories() %>%
                 collapse_categorical(name = categories)
 
         # publishers
         publishers =
-                links %>%
-                filter(type == 'boardgamepublisher') %>%
-                filter(id %in% publisher_allow) %>%
-                select(game_id, value) %>%
+                data %>%
+                unnest_publishers() %>%
+                filter(value %in% publisher_allow) %>%
                 collapse_categorical(name = publishers)
 
         # mechanics
         mechanics =
-                links %>%
-                filter(type == 'boardgamemechanic') %>%
-                select(game_id, value) %>%
+                data %>%
+                unnest_mechanics() %>%
                 collapse_categorical(name = mechanics)
 
         # artists
         artists =
-                links %>%
-                filter(type == 'boardgameartist') %>%
-                select(game_id, value) %>%
+                data %>%
+                unnest_artists() %>%
                 collapse_categorical(name = artists)
 
         # designers
         designers =
-                links %>%
-                filter(type == 'boardgamedesigner') %>%
-                select(game_id, value) %>%
+                data %>%
+                unnest_designers() %>%
                 collapse_categorical(name = designers)
 
         # now extract bgg families
         # general families
         families =
                 data %>%
-                select(game_id, links) %>%
-                unnest(c(links), keep_empty = T) %>%
-                filter(type == 'boardgamefamily') %>%
+                unnest_families() %>%
                 filter(!grepl(families_remove, value)) %>%
                 filter(grepl(families_allow, value)) %>%
-                mutate(value = clean_bgg_text(value)) %>%
+                clean_value() %>%
                 collapse_categorical(name = families)
 
         # themes
         themes =
                 data %>%
-                select(game_id, links) %>%
-                unnest(c(links), keep_empty = T) %>%
-                filter(type %in% 'boardgamefamily') %>%
-                filter(grepl("^Theme:", value)) %>%
-                mutate(value = gsub("^Theme: ", "", value)) %>%
-                mutate(value = clean_bgg_text(value)) %>%
-                select(game_id, value) %>%
+                unnest_themes()  %>%
+                clean_value() %>%
                 collapse_categorical(name = themes)
 
         # specific families
         components =
                 data %>%
-                select(game_id, links) %>%
-                unnest(c(links), keep_empty = T) %>%
-                filter(type %in% 'boardgamefamily') %>%
-                filter(grepl("^Components:", value)) %>%
-                mutate(value = gsub("^Components: ", "", value)) %>%
-                mutate(value = clean_bgg_text(value)) %>%
-                collapse_categorical(., name = components)
+                unnest_components()  %>%
+                clean_value() %>%
+                collapse_categorical(name = components)
 
         # mechanisms
         mechanisms =
                 data %>%
-                select(game_id, links) %>%
-                unnest(c(links), keep_empty = T) %>%
-                filter(type %in% 'boardgamefamily') %>%
-                filter(grepl("^Mechanism:", value)) %>%
-                mutate(value = gsub("^Mechanism: ", "", value)) %>%
-                mutate(value = clean_bgg_text(value)) %>%
-                select(game_id, value) %>%
+                unnest_mechanisms() %>%
+                clean_value() %>%
                 collapse_categorical(name = mechanisms)
 
         outcomes %>%
                 left_join(.,
                           info,
-                          by = join_by(game_id)) %>%
-                left_join(.,
-                          names,
                           by = join_by(game_id)) %>%
                 left_join(.,
                           categories,
@@ -189,11 +153,24 @@ preprocess_bgg_games = function(data,
                 left_join(.,
                           themes,
                           by = join_by(game_id)) %>%
-                select(game_id, name, yearpublished, everything())
+                select(any_of(bgg_ids()), everything())
 
 }
 
-publisher_allow_list = function() {
+bgg_ids = function() {
+        c("game_id", "name", "yearpublished")
+}
+
+bgg_outcomes = function() {
+        c("average", "averagweight", "bayesaverage", "usersrated")
+}
+
+keep_links = function() {
+        paste0("boardgame", c("category", "mechanic", "designer", "artist", "publisher"))
+}
+
+
+publishers_allow_list = function() {
 
         # list of ids allowed to enter model for publisher
         c(
@@ -324,9 +301,315 @@ families_allow_list = function() {
 collapse_categorical = function(data, name) {
 
         data %>%
+                clean_value() %>%
                 group_by(game_id) %>%
                 summarize({{name}} := paste(value, collapse = ", "),
                           .groups = 'drop')
 
 }
 
+# unnest ids
+unnest_ids = function(data) {
+
+        # unnest ids (game_id, name, yearpublished)
+        unnest_bgg_ids = function(data) {
+
+                data %>%
+                        unnest_info() %>%
+                        nest(info = -any_of(bgg_ids()))
+
+        }
+
+        # get ids with info
+        ids =
+                data %>%
+                unnest_bgg_ids()
+
+        ids |>
+                left_join(
+                        data %>%
+                                select(-info),
+                        by = join_by(game_id)) |>
+                select(
+                        any_of(bgg_ids()),
+                        any_of(names(data))
+                )
+}
+
+# preprocess games info
+unnest_info = function(data) {
+
+        info =
+                data %>%
+                select(game_id, info) %>%
+                unnest(c(info), keep_empty = T) %>%
+                mutate(across(
+                        c(yearpublished,
+                          minplayers,
+                          maxplayers,
+                          playingtime,
+                          minplaytime,
+                          maxplaytime,
+                          minage),
+                        ~ ifelse(. == 0, NA, .))
+                )
+
+        names =
+                data %>%
+                select(game_id, names) %>%
+                unnest(c(names), keep_empty = T) %>%
+                filter(type == 'primary') %>%
+                select(game_id,
+                       name = value)
+
+        info |>
+                left_join(names,
+                          by = join_by(game_id)) |>
+                select(
+                        any_of(bgg_ids()),
+                        everything()
+                )
+}
+
+# extract mechanics
+unnest_names = function(data,
+                        name_types = c("primary")) {
+
+        data %>%
+                select(any_of(bgg_ids()), names) %>%
+                unnest(c(names), keep_empty = T) %>%
+                filter(type %in% name_types) %>%
+                select(
+                        any_of(bgg_ids()),
+                        type,
+                        name = value
+                )
+}
+
+# unnest primary names
+unnest_primary_names = function(data) {
+
+        data %>%
+                select(game_id, names) %>%
+                unnest(c(names), keep_empty = T) %>%
+                filter(type == 'primary') %>%
+                select(game_id,
+                       name = value)
+}
+
+# extract links
+unnest_links = function(data,
+                        category = c("category", "mechanic", "designer", "artist", "publisher")
+) {
+
+        keep = paste0("boardgame", category)
+
+        # extract links
+        data %>%
+                select(
+                        any_of(bgg_ids()),
+                        links
+                ) %>%
+                unnest(c(links), keep_empty = T) %>%
+                filter(type %in% keep)
+}
+
+# use clean_bgg_text to clean value
+clean_value = function(data) {
+
+        data %>%
+                mutate(value = clean_bgg_text(value))
+}
+
+# remove "boardgame" from start of link type
+clean_link = function(data) {
+
+        data |>
+                mutate(type = gsub("^boardgame", "", type))
+}
+
+# get statistics
+unnest_statistics = function(data) {
+
+        data %>%
+                select(
+                        any_of(bgg_ids()),
+                        statistics
+                ) %>%
+                unnest(c(statistics), keep_empty = T)
+}
+
+# get outcomes
+unnest_outcomes = function(data) {
+
+        data %>%
+                unnest_statistics() %>%
+                select(any_of(bgg_ids()), averageweight, usersrated, average, bayesaverage, numweights) %>%
+                mutate(across(
+                        c(averageweight,
+                          average,
+                          bayesaverage),
+                        ~ ifelse(. == 0, NA, .))
+                )
+}
+
+# extract mechanics
+unnest_mechanics = function(data) {
+
+        data %>%
+                unnest_links(category = 'mechanic') %>%
+                clean_link()
+}
+
+# extract categories
+unnest_categories = function(data) {
+
+        data %>%
+                unnest_links(category = 'category') %>%
+                clean_link()
+
+}
+
+# extract
+unnest_artists = function(data) {
+
+        data %>%
+                unnest_links(category = 'category')
+
+}
+
+# extract families
+unnest_families = function(data) {
+
+        data %>%
+                unnest_links(category = 'family') %>%
+                clean_link()
+
+}
+
+# extract families
+unnest_families = function(data) {
+
+        data %>%
+                unnest_links(category = 'family') %>%
+                clean_link()
+
+}
+
+# extract artists
+unnest_artists = function(data) {
+
+        data %>%
+                unnest_links(category = 'artist') %>%
+                clean_link()
+
+}
+
+# extract designers
+unnest_designers = function(data) {
+
+        data %>%
+                unnest_links(category = 'designer') %>%
+                clean_link()
+
+}
+
+# extract publishers
+unnest_publishers = function(data) {
+
+        data %>%
+                unnest_links(category = 'publisher') %>%
+                clean_link()
+
+}
+
+# extract implementation
+unnest_implementations = function(data) {
+
+        data %>%
+                unnest_links(category = 'implementation') %>%
+                clean_link()
+
+}
+
+# extract accessory
+unnest_accessories = function(data) {
+
+        data %>%
+                unnest_links(category = 'accessory') %>%
+                clean_link()
+
+}
+
+# extract compilation
+unnest_compilations = function(data) {
+
+        data %>%
+                unnest_links(category = 'compilation') %>%
+                clean_link()
+
+}
+
+# extract integration
+unnest_integrations = function(data) {
+
+        data %>%
+                unnest_links(category = 'integration') %>%
+                clean_link()
+
+}
+
+# extract expansion
+unnest_expansions = function(data) {
+
+        data %>%
+                unnest_links(category = 'expansion') %>%
+                clean_link()
+
+}
+
+# extract themes
+unnest_themes = function(data) {
+
+        data %>%
+                unnest_families() %>%
+                filter(grepl("^Theme", value))
+
+}
+
+# extract components
+unnest_components = function(data) {
+
+        data %>%
+                unnest_families() %>%
+                filter(grepl("^Component", value))
+
+}
+
+# extract mechanisms
+unnest_mechanisms = function(data) {
+
+        data %>%
+                unnest_families() %>%
+                filter(grepl("^Mechanism", value))
+
+}
+
+# extract polls
+unnest_polls = function(data) {
+
+        data %>%
+                select(
+                        any_of(bgg_ids()),
+                        polls
+                ) %>%
+                unnest(c(polls), keep_empty = T)
+
+}
+
+# same as polls, but im probably going to remember playercounts...
+unnest_playercounts = function(data) {
+
+        data %>%
+                unnest_polls()
+}

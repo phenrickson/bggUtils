@@ -6,7 +6,7 @@
 \usage{
 preprocess_bgg_games(
   data,
-  publisher_allow = publisher_allow_list(),
+  publisher_allow = publishers_allow_list(),
   families_allow = families_allow_list(),
   families_remove = families_remove_list()
 )
