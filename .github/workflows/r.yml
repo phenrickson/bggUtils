@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GCS_AUTH_FILE: ${{ secrets.GCS_AUTH_FILE}}
       R_KEEP_PKG_SOURCE: yes
     steps:
       - uses: actions/checkout@v4
