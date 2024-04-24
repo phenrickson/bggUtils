@@ -35,6 +35,3 @@ a data frame with number of votes for playercounts
 \description{
 query playercount data for selected games
 }
-\examples{
-query_playercounts(conn = bigquery_connect(), game_ids = c(12, 7))
-}

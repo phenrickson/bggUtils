@@ -12,7 +12,7 @@ get_games_from_gcp(
 )
 }
 \arguments{
-\item{bucket}{}
+\item{bucket}{gcp bucket}
 
 \item{object_name}{path to object in gcp bucket}
 

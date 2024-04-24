@@ -12,8 +12,6 @@
 #'
 #' @return a data frame with number of votes for playercounts
 #' @export query_playercounts
-#' @examples
-#' query_playercounts(conn = bigquery_connect(), game_ids = c(12, 7))
 query_playercounts = function(conn = bigquery_connect(),
                               game_ids,
                               rec_values = c('Best', 'Recommended', 'Not Recommended'),
