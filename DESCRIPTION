@@ -30,7 +30,8 @@ Imports:
     zoo,
     bigrquery,
     googleCloudStorageR,
-    qs
+    qs,
+    DBI
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -10,12 +10,11 @@ query_playercounts(
   rec_values = c("Best", "Recommended", "Not Recommended"),
   vote_types = c("yes"),
   minvotes = 10,
-  eval = T,
-  ...
+  eval = T
 )
 }
 \arguments{
-\item{conn}{DBI connection to database}
+\item{conn}{connection to database}
 
 \item{game_ids}{vector of game ids}
 
@@ -26,8 +25,6 @@ query_playercounts(
 \item{minvotes}{minimum number of votes}
 
 \item{eval}{whether to evaluate query or not}
-
-\item{...}{}
 }
 \value{
 a data frame with number of votes for playercounts

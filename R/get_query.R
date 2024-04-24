@@ -4,18 +4,18 @@
 #' @param query a SQL query as a string
 #' @param conn a DBI connection
 #' @param eval to evaluate the query or to just show the query with connection
+#'
+#' @importFrom DBI dbGetQuery
 # runs query given connection/query or returns sql for query
 get_query = function(query,
                      conn,
-                     eval = T,
-                     ...) {
+                     eval = T) {
 
     if (eval == T) {
 
         DBI::dbGetQuery(
             conn,
-            statement = query,
-            ...
+            statement = query
         )
     }
 

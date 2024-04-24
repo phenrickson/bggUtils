@@ -2,6 +2,8 @@
 #'
 #' @import bigrquery
 #'
+#' @importFrom DBI dbConnect
+#'
 #' @param project gcp project id
 #' @param dataset bigquery schema
 #' @export bigquery_connect

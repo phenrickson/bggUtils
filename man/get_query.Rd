@@ -4,7 +4,7 @@
 \alias{get_query}
 \title{get query via DBI}
 \usage{
-get_query(query, conn, eval = T, ...)
+get_query(query, conn, eval = T)
 }
 \arguments{
 \item{query}{a SQL query as a string}

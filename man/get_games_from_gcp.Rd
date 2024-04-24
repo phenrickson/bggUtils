@@ -7,8 +7,7 @@
 get_games_from_gcp(
   bucket = "bgg_data",
   object_name = games_object(),
-  generation = NULL,
-  ...
+  generation = NULL
 )
 }
 \arguments{

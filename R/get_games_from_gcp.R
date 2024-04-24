@@ -11,22 +11,19 @@
 get_games_from_gcp = function(
                 bucket = "bgg_data",
                 object_name = games_object(),
-                generation = NULL,
-                ...) {
+                generation = NULL) {
 
         if (is.null(generation)) {
 
                 googleCloudStorageR::gcs_get_object(object_name = object_name,
-                                                    bucket = bucket,
-                                                    ...) |>
+                                                    bucket = bucket) |>
                         qs::qdeserialize()
         }
 
         else {
                 googleCloudStorageR::gcs_get_object(object_name = object_name,
                                                     generation = generation,
-                                                    bucket = bucket,
-                                                    ...) |>
+                                                    bucket = bucket) |>
                         qs::qdeserialize()
         }
 }

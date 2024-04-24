@@ -7,7 +7,7 @@
 query_info(conn = bigquery_connect(), game_ids, eval = T)
 }
 \arguments{
-\item{conn}{DBI connection to database}
+\item{conn}{connection to database}
 
 \item{game_ids}{vector of game ids}
 

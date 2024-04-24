@@ -1,6 +1,6 @@
 #' query active games data
 #'
-#' @param conn DBI connection to database
+#' @param conn connection to database
 #' @param game_ids vector of game ids
 #' @param eval whether to evaluate query or not
 #'

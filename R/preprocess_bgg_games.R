@@ -12,30 +12,6 @@
 #'
 #' @import tidyr dplyr
 #' @export preprocess_bgg_games
-#' @export unnest_accessories
-#' @export unnest_artists
-#' @export unnest_categories
-#' @export unnest_compilations
-#' @export unnest_components
-#' @export unnest_designers
-#' @export unnest_expansions
-#' @export unnest_families
-#' @export unnest_ids
-#' @export unnest_implementations
-#' @export unnest_integrations
-#' @export unnest_links
-#' @export unnest_mechanics
-#' @export unnest_mechanisms
-#' @export unnest_names
-#' @export unnest_outcomes
-#' @export unnest_playercounts
-#' @export unnest_publishers
-#' @export unnest_statistics
-#' @export unnest_themes
-#' @export bgg_ids
-#' @export publishers_allow_list
-#' @export families_allow_list
-#' @export families_remove_list
 #'
 #' @examples
 #' api_resp = get_bgg_games(c(12, 7), simplify = TRUE)

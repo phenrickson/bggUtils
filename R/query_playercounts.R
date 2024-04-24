@@ -1,12 +1,11 @@
 #' query playercount data for selected games
 #'
-#' @param conn DBI connection to database
+#' @param conn connection to database
 #' @param game_ids vector of game ids
 #' @param rec_values type of recommendation ('Best', 'Not Recommended')
 #' @param vote_types vote types
 #' @param minvotes minimum number of votes
 #' @param eval whether to evaluate query or not
-#' @param ...
 #'
 #' @importFrom glue glue_sql
 #'
@@ -17,8 +16,7 @@ query_playercounts = function(conn = bigquery_connect(),
                               rec_values = c('Best', 'Recommended', 'Not Recommended'),
                               vote_types = c('yes'),
                               minvotes = 10,
-                              eval = T,
-                              ...) {
+                              eval = T) {
 
     query = glue::glue_sql(
         "SELECT
