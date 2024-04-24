@@ -5,8 +5,8 @@
 #' @param generation version of object in bucket
 #' @param bucket
 #'
-#' @importFrom googleCloudStorageR gcs_get_object
-#' @importFrom qs qdeserialize
+#' @import qs
+#' @import googleCloudStorageR
 #' @return games data in nested data frame
 #' @export get_games_from_gcp
 get_games_from_gcp = function(

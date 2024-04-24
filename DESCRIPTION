@@ -27,7 +27,10 @@ Imports:
     glue,
     stringr,
     xml2,
-    zoo
+    zoo,
+    bigrquery,
+    googleCloudStorageR,
+    qs
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
