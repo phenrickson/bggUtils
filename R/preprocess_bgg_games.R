@@ -138,7 +138,7 @@ bgg_ids = function() {
 }
 
 bgg_outcomes = function() {
-        c("average", "averagweight", "bayesaverage", "usersrated")
+        c("average", "averageweight", "bayesaverage", "usersrated")
 }
 
 keep_links = function() {
