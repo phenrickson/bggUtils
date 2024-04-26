@@ -46,7 +46,7 @@ preprocess_bgg_games = function(data,
         publishers =
                 data %>%
                 unnest_publishers() %>%
-                filter(value %in% publisher_allow) %>%
+                filter(id %in% publisher_allow) %>%
                 collapse_categorical(name = publishers)
 
         # mechanics
