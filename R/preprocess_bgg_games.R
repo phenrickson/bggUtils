@@ -74,28 +74,24 @@ preprocess_bgg_games = function(data,
                 unnest_families() %>%
                 filter(!grepl(families_remove, value)) %>%
                 filter(grepl(families_allow, value)) %>%
-                clean_value() %>%
                 collapse_categorical(name = families)
 
         # themes
         themes =
                 data %>%
                 unnest_themes()  %>%
-                clean_value() %>%
                 collapse_categorical(name = themes)
 
         # specific families
         components =
                 data %>%
                 unnest_components()  %>%
-                clean_value() %>%
                 collapse_categorical(name = components)
 
         # mechanisms
         mechanisms =
                 data %>%
                 unnest_mechanisms() %>%
-                clean_value() %>%
                 collapse_categorical(name = mechanisms)
 
         outcomes %>%
