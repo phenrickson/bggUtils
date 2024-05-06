@@ -565,7 +565,7 @@ unnest_components = function(data) {
         data %>%
                 unnest_families() %>%
                 filter(grepl("^Component", value)) %>%
-                mutate(gsub("^Components: ", "", value))
+                mutate(value = gsub("^Components: ", "", value))
 
 }
 
