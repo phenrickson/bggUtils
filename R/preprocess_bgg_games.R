@@ -215,16 +215,15 @@ families_remove_list = function() {
         c("^Admin:",
           "^Misc:",
           "^Promotional:",
-          "^Digital Implementations: ",
-          "^Components: Game Trayz Inside",
+          "^Digital Implementations:",
           "^Crowdfunding: Spieleschmiede",
           "^Crowdfunding: Verkami",
           "^Crowdfunding: Indiegogo",
           "^Contests:",
           "^Game:",
-          "^Players:",
-          "^Players: Games with expansions",
-          "^Crowdfunding:") %>%
+          "^Players: Expansions",
+          "^Players: Games with expansions"
+        ) %>%
                 paste(., collapse = "|")
 }
 
@@ -234,6 +233,15 @@ families_allow_list = function() {
           "^Series: 18xx",
           "^Series: Cards Against Humanity-Like",
           "^Series: Exit: The Game",
+          "^Players: Games with Solitaire Rules",
+          "^Players: Wargames with Solitaire Rules",
+          "^Players: One versus Many",
+          "^Players: Solitaire Only Games",
+          "^Players: Solitaire Only Wargames",
+          "^Players: Two-Player Only Games",
+          "^Players: Three Players Only Games",
+          "^Players: Wargames with Rules Supporting Only Two Players",
+          "^Players: Solitaire Only Card Games",
           "^Country:",
           "^Animals",
           "^History",
@@ -255,6 +263,8 @@ families_allow_list = function() {
           "^Card Games",
           "^Collectible",
           "^Containers",
+          "^Crowdfunding: Kickstarter",
+          "^Crowdfunding: Gamefound",
           "^Authors",
           "^Characters",
           "^Religious",
@@ -554,7 +564,8 @@ unnest_components = function(data) {
 
         data %>%
                 unnest_families() %>%
-                filter(grepl("^Component", value))
+                filter(grepl("^Component", value)) %>%
+                mutate(gsub("^Components: ", "", value))
 
 }
 
@@ -563,7 +574,8 @@ unnest_mechanisms = function(data) {
 
         data %>%
                 unnest_families() %>%
-                filter(grepl("^Mechanism", value))
+                filter(grepl("^Mechanism", value)) %>%
+                mutate(value = gsub("^Mechanism: ", "", value))
 
 }
 
