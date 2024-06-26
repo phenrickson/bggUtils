@@ -7,6 +7,7 @@
 #' @importFrom tidyr as_tibble
 #' @importFrom dplyr filter
 #' @importFrom glue glue
+#' @importFrom utils read.table
 #'
 #' @return data frame with bgg ids
 #' @export get_bgg_ids

@@ -1,7 +1,7 @@
 Type: Package
 Package: bggUtils
 Title: Functions for BoardGameGeek Data
-Version: 0.1.0
+Version: 0.2.0
 Author: Phil Henrickson
 Maintainer: <phil.henrickson@gmail.com>
 Description: Package containing helper functions for loading and analysing
@@ -14,7 +14,6 @@ Depends:
     foreach,
     httr2,
     jsonlite,
-    magrittr,
     purrr,
     RcppSimdJson,
     rvest,
@@ -24,7 +23,6 @@ Depends:
 Imports:
     data.table,
     furrr,
-    future,
     ggplot2,
     glue,
     stringr,
