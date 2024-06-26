@@ -206,6 +206,7 @@ publishers_allow_list = function() {
                 ,18617 #Red Raven Games
                 ,102 #Decision Games (I)
                 , 489# 3W (World Wide Wargames)
+                , 25624 # Leder Games
         )
 
 }
