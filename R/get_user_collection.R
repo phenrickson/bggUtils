@@ -19,7 +19,7 @@
 #' user_collection <- get_user_collection("mrbananagrabber")
 #'
 get_user_collection <- function(username,
-                                max_tries=5) {
+                                max_tries = 5) {
   xml <-
     request_collection(username, max_tries = max_tries) |>
     get_collection_xml()
@@ -99,7 +99,7 @@ build_url <- function(username) {
 
 # build request to keep trying for up to two minutes based on status
 build_request <- function(url,
-                          max_tries=5) {
+                          max_tries = 5) {
   request(url) |>
     req_retry(
       is_transient = ~ resp_status(.x) == 202,
@@ -110,10 +110,10 @@ build_request <- function(url,
 
 # perform user request
 request_collection <- function(username,
-                               max_tries=5) {
+                               max_tries = 5) {
   username |>
     build_url() |>
-    build_request(max_tries=max_tries) |>
+    build_request(max_tries = max_tries) |>
     req_perform()
 }
 

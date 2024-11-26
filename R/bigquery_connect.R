@@ -7,26 +7,20 @@
 #' @param project gcp project id
 #' @param dataset bigquery schema
 #' @export bigquery_connect
-bigquery_connect = function(project = "gcp-demos-411520",
-                            dataset = "bgg") {
+bigquery_connect <- function(project = Sys.getenv("GCS_PROJECT_ID"),
+                             dataset = "bgg") {
+  # authenticate
+  bigquery_authenticate()
 
-        # authenticate
-        bigquery_authenticate()
-
-        # connect
-        DBI::dbConnect(
-                bigrquery::bigquery(),
-                project = project,
-                dataset = dataset
-        )
+  # connect
+  DBI::dbConnect(
+    bigrquery::bigquery(),
+    project = project,
+    dataset = dataset
+  )
 }
 
 # authenticate via json
-bigquery_authenticate = function(path = bigquery_auth_file()) {
-    bigrquery::bq_auth(path = path)
-}
-
-# location of json auth file
-bigquery_auth_file = function() {
-    Sys.getenv("GCS_AUTH_FILE")
+bigquery_authenticate <- function(path = Sys.getenv("GCS_AUTH_FILE")) {
+  bigrquery::bq_auth(path = path)
 }

@@ -105,7 +105,7 @@ test_that("function pulls expected data data from bgg for a collection", {
   # should get a data frame with zero rows and a warning
   # test for warning
   expect_warning(get_user_collection("not_an_actual_username_for_test",
-    max_tries = 1
+    max_tries = 2
   ))
 
   # # test rows

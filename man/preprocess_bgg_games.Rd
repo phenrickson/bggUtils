@@ -25,10 +25,10 @@ takes output of `get_bgg_games()` and tidies output for modeling. this includes 
 filtering to include/exclude selected categorical features, and collapsing categorical features for use with tokenization
 }
 \examples{
-api_resp = get_bgg_games(c(12, 7), simplify = TRUE)
+api_resp <- get_bgg_games(c(12, 7), simplify = TRUE)
 
 api_resp \%>\%
-unnest(data) \%>\%
-preprocess_bgg_games()
+  unnest(data) \%>\%
+  preprocess_bgg_games()
 
 }
