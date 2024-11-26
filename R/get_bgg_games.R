@@ -63,8 +63,8 @@ get_bgg_games <- function(game_ids,
     )
 
 
-    #message(paste("requesting game ids in batches of", batch_size))
-    #message(paste(length(id_batches), "batch(es) to request from api"))
+    # message(paste("requesting game ids in batches of", batch_size))
+    # message(paste(length(id_batches), "batch(es) to request from api"))
 
     id_batches <- split(
       game_ids,
@@ -142,21 +142,18 @@ get_bgg_games <- function(game_ids,
     message("all batches completed")
   }
 
-        if (simplify == T & toJSON == F) {
-
-                out =
-                        tibble(game_id = game_ids) %>%
-                        left_join(.,
-                                  out$bgg_games_data %>%
-                                          nest(data = -game_id),
-                                  by = join_by(game_id)
-                        ) %>%
-                        mutate(timestamp = out$timestamp)
-        } else
-                if (simplify == T & toJSON == T) {
-
-                        out = out$bgg_games_data
-                }
+  if (simplify == T & toJSON == F) {
+    out <-
+      tibble(game_id = game_ids) %>%
+      left_join(.,
+        out$bgg_games_data %>%
+          nest(data = -game_id),
+        by = join_by(game_id)
+      ) %>%
+      mutate(timestamp = out$timestamp)
+  } else if (simplify == T & toJSON == T) {
+    out <- out$bgg_games_data
+  }
 
   return(out)
 }

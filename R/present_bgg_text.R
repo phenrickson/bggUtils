@@ -14,7 +14,7 @@
 #' @examples
 #' present_bgg_text("fantasy_flight_games")
 present_bgg_text <- function(text,
-                         minlength = 50) {
+                             minlength = 50) {
   suppressWarnings({
     text |>
       str_replace_all("_", " ") |>

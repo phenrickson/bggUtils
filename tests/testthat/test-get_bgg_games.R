@@ -91,83 +91,81 @@ test_that("returning data when submitting a request for multiple games", {
 })
 
 test_that("return a record for all game_ids if simplify is enabled", {
-        # id to test with
-        input_id <- c(12, 7, 13, 174430)
+  # id to test with
+  input_id <- c(12, 7, 13, 174430)
 
-        # names expected in simplified data
-        resp_template <- c(
-                "game_id",
-                "data",
-                "timestamp"
-        )
+  # names expected in simplified data
+  resp_template <- c(
+    "game_id",
+    "data",
+    "timestamp"
+  )
 
-        # names expected after unnesting
-        game_template <- c(
-                "game_id",
-                "type",
-                "info",
-                "names",
-                "links",
-                "statistics",
-                "ranks",
-                "polls",
-                "timestamp"
-        )
+  # names expected after unnesting
+  game_template <- c(
+    "game_id",
+    "type",
+    "info",
+    "names",
+    "links",
+    "statistics",
+    "ranks",
+    "polls",
+    "timestamp"
+  )
 
-        # get data
-        game_data <- get_bgg_games(input_id, simplify = T)
+  # get data
+  game_data <- get_bgg_games(input_id, simplify = T)
 
-        # unnested
-        unnested_data = game_data %>% unnest(data, keep_empty = T)
+  # unnested
+  unnested_data <- game_data %>% unnest(data, keep_empty = T)
 
-        # tests
-        expect_identical(input_id, game_data$game_id)
-        # check names of response
-        expect_identical(resp_template, names(game_data))
-        # check names of data
-        expect_identical(game_template, names(unnested_data))
-        # check that number of rows of data is equal to the number of ids
-        expect_true(nrow(game_data) == length(input_id))
+  # tests
+  expect_identical(input_id, game_data$game_id)
+  # check names of response
+  expect_identical(resp_template, names(game_data))
+  # check names of data
+  expect_identical(game_template, names(unnested_data))
+  # check that number of rows of data is equal to the number of ids
+  expect_true(nrow(game_data) == length(input_id))
 })
 
 test_that("return one table if simplify is enabled and data is returned in batches", {
+  # id to test with
+  input_id <- c(12, 7, 13, 174430)
 
-        # id to test with
-        input_id <- c(12, 7, 13, 174430)
+  # names expected in simplified data
+  resp_template <- c(
+    "game_id",
+    "data",
+    "timestamp"
+  )
 
-        # names expected in simplified data
-        resp_template <- c(
-                "game_id",
-                "data",
-                "timestamp"
-        )
+  # names expected after unnesting
+  game_template <- c(
+    "game_id",
+    "type",
+    "info",
+    "names",
+    "links",
+    "statistics",
+    "ranks",
+    "polls",
+    "timestamp"
+  )
 
-        # names expected after unnesting
-        game_template <- c(
-                "game_id",
-                "type",
-                "info",
-                "names",
-                "links",
-                "statistics",
-                "ranks",
-                "polls",
-                "timestamp"
-        )
+  # get data
+  game_data <- get_bgg_games(input_id, batch_size = 2, simplify = T)
 
-        # get data
-        game_data <- get_bgg_games(input_id, batch_size = 2, simplify = T)
+  # unnested
+  unnested_data <- game_data %>% unnest(data, keep_empty = T)
 
-        # unnested
-        unnested_data = game_data %>% unnest(data, keep_empty = T)
-
-        # tests
-        expect_identical(input_id, game_data$game_id)
-        # check names of response
-        expect_identical(resp_template, names(game_data))
-        # check names of data
-        expect_identical(game_template, names(unnested_data))
-        # check that number of rows of data is equal to the number of ids
-        expect_true(nrow(game_data) == length(input_id))
+  # tests
+  expect_identical(input_id, game_data$game_id)
+  # check names of response
+  expect_identical(resp_template, names(game_data))
+  # check names of data
+  expect_identical(game_template, names(unnested_data))
+  # check that number of rows of data is equal to the number of ids
+  expect_true(nrow(game_data) == length(input_id))
 })
-
