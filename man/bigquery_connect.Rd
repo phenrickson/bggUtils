@@ -4,7 +4,7 @@
 \alias{bigquery_connect}
 \title{connect to bigquery}
 \usage{
-bigquery_connect(project = "gcp-demos-411520", dataset = "bgg")
+bigquery_connect(project = Sys.getenv("GCS_PROJECT_ID"), dataset = "bgg")
 }
 \arguments{
 \item{project}{gcp project id}

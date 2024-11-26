@@ -11,15 +11,14 @@
 #'
 #' @return a data frame with number of votes for playercounts
 #' @export query_playercounts
-query_playercounts = function(conn = bigquery_connect(),
-                              game_ids,
-                              rec_values = c('Best', 'Recommended', 'Not Recommended'),
-                              vote_types = c('yes'),
-                              minvotes = 10,
-                              eval = T) {
-
-    query = glue::glue_sql(
-        "SELECT
+query_playercounts <- function(conn = bigquery_connect(),
+                               game_ids,
+                               rec_values = c("Best", "Recommended", "Not Recommended"),
+                               vote_types = c("yes"),
+                               minvotes = 10,
+                               eval = T) {
+  query <- glue::glue_sql(
+    "SELECT
         game_id,
         value,
         numplayers,
@@ -30,10 +29,12 @@ query_playercounts = function(conn = bigquery_connect(),
         AND vote IN ({vote_types*})
         AND totalvotes >= ({minvotes*})
         ORDER BY game_id, numplayers",
-        .con = conn
-    )
+    .con = conn
+  )
 
-    get_query(query = query,
-              conn = conn,
-              eval = eval)
+  get_query(
+    query = query,
+    conn = conn,
+    eval = eval
+  )
 }

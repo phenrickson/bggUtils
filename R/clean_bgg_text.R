@@ -27,15 +27,15 @@ clean_bgg_text <- function(text) {
 }
 
 clean_text <- function(text) {
-        text |>
-                str_to_lower() |>
-                str_replace("-", " ") |>
-                str_replace(":", " ") |>
-                str_replace("/", " ") |>
-                str_remove_all("[:punct:]") |>
-                str_remove_all("[^[:alnum:] ]") |>
-                str_remove_all("\\(") |>
-                str_remove_all("\\)") |>
-                str_replace_all("\\s+", "_") |>
-                str_squish()
+  text |>
+    str_to_lower() |>
+    str_replace("-", " ") |>
+    str_replace(":", " ") |>
+    str_replace("/", " ") |>
+    str_remove_all("[:punct:]") |>
+    str_remove_all("[^[:alnum:] ]") |>
+    str_remove_all("\\(") |>
+    str_remove_all("\\)") |>
+    str_replace_all("\\s+", "_") |>
+    str_squish()
 }

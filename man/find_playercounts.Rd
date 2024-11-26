@@ -21,7 +21,7 @@ filter wide player count data to find games matching crtieria
 }
 \examples{
 query_playercounts(game_id = c(12, 7, 21)) |>
-wider_playercounts() |>
-find_playercounts(type = "best", numplayers = 3)
+  wider_playercounts() |>
+  find_playercounts(type = "best", numplayers = 3)
 
 }
