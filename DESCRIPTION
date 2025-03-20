@@ -31,6 +31,7 @@ Imports:
     bigrquery,
     googleCloudStorageR,
     qs,
+    qs2,
     DBI
 Suggests: 
     testthat (>= 3.0.0)
