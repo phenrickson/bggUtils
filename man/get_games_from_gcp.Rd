@@ -5,20 +5,20 @@
 \title{load games data from gcp bucket}
 \usage{
 get_games_from_gcp(
-  bucket = "bgg_data",
-  object_name = games_object(),
+  bucket_name = "bgg_data",
+  object = "raw/objects/games",
   generation = NULL
 )
 }
 \arguments{
-\item{bucket}{gcp bucket}
+\item{bucket_name}{Name of the GCS bucket}
 
-\item{object_name}{path to object in gcp bucket}
+\item{object}{Name of the object to load}
 
-\item{generation}{version of object in bucket}
+\item{generation}{Optional generation to load}
 }
 \value{
-games data in nested data frame
+Data frame of games or NULL if not found
 }
 \description{
 load games data from gcp bucket
